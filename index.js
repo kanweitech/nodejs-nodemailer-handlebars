@@ -1,6 +1,7 @@
 require('dotenv').config();
 
 const nodemailer = require('nodemailer');
+const hbs = require('nodemailer-express-handlebars');
 
 const port = process.env.PORT || 5001
 
@@ -13,12 +14,24 @@ const transporter = nodemailer.createTransport({
     }
 });
 
+// Configure handlebars plugin
+const hbsOptions = {
+    viewEngine: {
+        defaultLayout: false
+    },
+    viewPath: 'views'
+};
+transporter.use('compile', hbs(hbsOptions))
+
 // Step 2: Configure email options like from, to, subject, message, attachments...
 const mailOptions = {
     from: 'admin@magavotes.store',
     to: 'storchscott19@gmail.com',
     subject: 'Dynamic Email Template with Node.js',
-    text: 'Simple email message (no HTML)'
+    template: 'Welcome Message',
+    context: {
+        userName: 'John Doe'
+    }
 };
 
 // Step 3: Send email options using the transporter
